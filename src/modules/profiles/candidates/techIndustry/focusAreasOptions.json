@@ -1,0 +1,15 @@
+{
+  "SUPPORT": "Support",
+  "NETWORKING": "Networking",
+  "CLOUD": "Cloud",
+  "INFRASTRUCTURE": "Infrastructure",
+  "TESTING": "Testing",
+  "TEAM_MANAGEMENT": "Team Management",
+  "DATA_SCIENCE": "Data Science",
+  "DATABASE": "Database",
+  "PRODUCT_MANAGEMENT": "Product Management",
+  "PROJECT_MANAGEMENT": "Project Management",
+  "SECURITY": "Security",
+  "BUSINESS_ANALYSIS": "Business Analysis",
+  "OTHER": "Other"
+}

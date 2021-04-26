@@ -1,0 +1,18 @@
+{
+  "SOFTWARE_DEVELOPER": {
+    "href": "software-developer",
+    "label": "I code & build software"
+  },
+  "CLIENT_HIRER": {
+    "href": "client",
+    "label": "I’m looking to hire developers"
+  },
+  "CLIENT_ADMIN": {
+    "href": "client",
+    "label": "I’m looking to hire developers"
+  },
+  "TECH_INDUSTRY": {
+    "href": "tech-industry",
+    "label": "I work in the tech industry"
+  }
+}

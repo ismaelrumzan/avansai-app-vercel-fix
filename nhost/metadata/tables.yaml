@@ -1,0 +1,1162 @@
+- table:
+    schema: auth
+    name: account_providers
+  object_relationships:
+  - name: account
+    using:
+      foreign_key_constraint_on: account_id
+  - name: provider
+    using:
+      foreign_key_constraint_on: auth_provider
+- table:
+    schema: auth
+    name: account_roles
+  object_relationships:
+  - name: account
+    using:
+      foreign_key_constraint_on: account_id
+  - name: roleByRole
+    using:
+      foreign_key_constraint_on: role
+  insert_permissions:
+  - role: me
+    permission:
+      check:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - role
+      - created_at
+      - account_id
+      - id
+      backend_only: false
+  - role: recruiter
+    permission:
+      check:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - role
+      - created_at
+      - account_id
+      - id
+      backend_only: false
+  - role: user
+    permission:
+      check:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - role
+      - created_at
+      - account_id
+      - id
+      backend_only: false
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - id
+      - created_at
+      - account_id
+      - role
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - role
+      - created_at
+      - account_id
+      - id
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - role
+      - created_at
+      - account_id
+      - id
+      filter: {}
+  update_permissions:
+  - role: me
+    permission:
+      columns:
+      - account_id
+      - id
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+  - role: recruiter
+    permission:
+      columns:
+      - account_id
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+      - account_id
+      - role
+      filter:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        account:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: auth
+    name: accounts
+  object_relationships:
+  - name: role
+    using:
+      foreign_key_constraint_on: default_role
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+  array_relationships:
+  - name: account_providers
+    using:
+      foreign_key_constraint_on:
+        column: account_id
+        table:
+          schema: auth
+          name: account_providers
+  - name: account_roles
+    using:
+      foreign_key_constraint_on:
+        column: account_id
+        table:
+          schema: auth
+          name: account_roles
+  - name: refresh_tokens
+    using:
+      foreign_key_constraint_on:
+        column: account_id
+        table:
+          schema: auth
+          name: refresh_tokens
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - user_id
+      - active
+      - email
+      - new_email
+      - password_hash
+      - default_role
+      - is_anonymous
+      - custom_register_data
+      - otp_secret
+      - mfa_enabled
+      - ticket
+      - ticket_expires_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+  - role: recruiter
+    permission:
+      columns:
+      - active
+      - is_anonymous
+      - mfa_enabled
+      - email
+      - new_email
+      - custom_register_data
+      - default_role
+      - otp_secret
+      - password_hash
+      - created_at
+      - ticket_expires_at
+      - updated_at
+      - id
+      - ticket
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+      - id
+      - created_at
+      - updated_at
+      - user_id
+      - active
+      - email
+      - new_email
+      - password_hash
+      - default_role
+      - is_anonymous
+      - custom_register_data
+      - otp_secret
+      - mfa_enabled
+      - ticket
+      - ticket_expires_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: auth
+    name: providers
+  array_relationships:
+  - name: account_providers
+    using:
+      foreign_key_constraint_on:
+        column: auth_provider
+        table:
+          schema: auth
+          name: account_providers
+- table:
+    schema: auth
+    name: refresh_tokens
+  object_relationships:
+  - name: account
+    using:
+      foreign_key_constraint_on: account_id
+- table:
+    schema: auth
+    name: roles
+  array_relationships:
+  - name: account_roles
+    using:
+      foreign_key_constraint_on:
+        column: role
+        table:
+          schema: auth
+          name: account_roles
+  - name: accounts
+    using:
+      foreign_key_constraint_on:
+        column: default_role
+        table:
+          schema: auth
+          name: accounts
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - role
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - role
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - role
+      filter: {}
+- table:
+    schema: public
+    name: databases
+  is_enum: true
+  array_relationships:
+  - name: types
+    using:
+      foreign_key_constraint_on:
+        column: database
+        table:
+          schema: public
+          name: databases_associated_types
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      - release_year
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - release_year
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - release_year
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: databases_associated_types
+  object_relationships:
+  - name: databaseType
+    using:
+      foreign_key_constraint_on: type
+  - name: dbAssociatedTypes
+    using:
+      foreign_key_constraint_on: database
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - database
+      - type
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - database
+      - type
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - database
+      - type
+      filter: {}
+- table:
+    schema: public
+    name: databases_types
+  is_enum: true
+  array_relationships:
+  - name: dbAssociatedtypes
+    using:
+      foreign_key_constraint_on:
+        column: type
+        table:
+          schema: public
+          name: databases_associated_types
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: focus_areas
+  is_enum: true
+  object_relationships:
+  - name: profileType
+    using:
+      foreign_key_constraint_on: profile_type
+  array_relationships:
+  - name: profiles
+    using:
+      foreign_key_constraint_on:
+        column: focus_area
+        table:
+          schema: public
+          name: profiles
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      - profile_type
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - profile_type
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - profile_type
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: frameworks
+  object_relationships:
+  - name: frameworkType
+    using:
+      foreign_key_constraint_on: type
+  array_relationships:
+  - name: associatedLanguages
+    using:
+      foreign_key_constraint_on:
+        column: framework_id
+        table:
+          schema: public
+          name: frameworks_associated_languages
+  - name: frameworkCategories
+    using:
+      foreign_key_constraint_on:
+        column: framework_id
+        table:
+          schema: public
+          name: frameworks_associated_categories
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - id
+      - release_year
+      - name
+      - type
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - release_year
+      - type
+      - id
+      - name
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - id
+      - name
+      - release_year
+      - type
+      filter: {}
+- table:
+    schema: public
+    name: frameworks_associated_categories
+  object_relationships:
+  - name: framework
+    using:
+      foreign_key_constraint_on: framework_id
+  - name: frameworkCategories
+    using:
+      foreign_key_constraint_on: categories
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - framework_id
+      - categories
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - categories
+      - framework_id
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - categories
+      - framework_id
+      filter: {}
+- table:
+    schema: public
+    name: frameworks_associated_languages
+  object_relationships:
+  - name: framework
+    using:
+      foreign_key_constraint_on: framework_id
+  - name: programmingLanguages
+    using:
+      foreign_key_constraint_on: language
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - framework_id
+      - language
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - framework_id
+      - language
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - framework_id
+      - language
+      filter: {}
+- table:
+    schema: public
+    name: frameworks_categories
+  is_enum: true
+  array_relationships:
+  - name: frameworks_associated_categories
+    using:
+      foreign_key_constraint_on:
+        column: categories
+        table:
+          schema: public
+          name: frameworks_associated_categories
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: frameworks_types
+  is_enum: true
+  array_relationships:
+  - name: frameworks
+    using:
+      foreign_key_constraint_on:
+        column: type
+        table:
+          schema: public
+          name: frameworks
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: profiles
+  object_relationships:
+  - name: focusArea
+    using:
+      foreign_key_constraint_on: focus_area
+  - name: profilesType
+    using:
+      foreign_key_constraint_on: profile_type
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+  - name: workLocationType
+    using:
+      foreign_key_constraint_on: work_location_type
+  - name: workStatus
+    using:
+      foreign_key_constraint_on: work_status
+  - name: workVacationDuration
+    using:
+      foreign_key_constraint_on: work_vacation_duration
+  array_relationships:
+  - name: spokenLanguages
+    using:
+      foreign_key_constraint_on:
+        column: profile_id
+        table:
+          schema: public
+          name: profiles_spoken_languages
+  insert_permissions:
+  - role: me
+    permission:
+      check:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - driving_to_work
+      - relocate_for_work
+      - visa_sponsorship
+      - acceptable_travel_time
+      - contract_compensation
+      - full_time_compensation
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      - address
+      - focus_area
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - resume_url
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - created_at
+      - updated_at
+      - id
+      - user_id
+      backend_only: false
+  - role: recruiter
+    permission:
+      check:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - driving_to_work
+      - relocate_for_work
+      - visa_sponsorship
+      - acceptable_travel_time
+      - contract_compensation
+      - full_time_compensation
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      - address
+      - focus_area
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - resume_url
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - created_at
+      - updated_at
+      - id
+      - user_id
+      backend_only: false
+  - role: user
+    permission:
+      check:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - driving_to_work
+      - relocate_for_work
+      - visa_sponsorship
+      - acceptable_travel_time
+      - contract_compensation
+      - full_time_compensation
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      - address
+      - focus_area
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - resume_url
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - created_at
+      - updated_at
+      - id
+      - user_id
+      backend_only: false
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - driving_to_work
+      - relocate_for_work
+      - visa_sponsorship
+      - acceptable_travel_time
+      - contract_compensation
+      - full_time_compensation
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      - address
+      - focus_area
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - resume_url
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - created_at
+      - updated_at
+      - id
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+  - role: recruiter
+    permission:
+      columns:
+      - driving_to_work
+      - relocate_for_work
+      - visa_sponsorship
+      - acceptable_travel_time
+      - contract_compensation
+      - full_time_compensation
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      - address
+      - focus_area
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - resume_url
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - created_at
+      - updated_at
+      - id
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+      - driving_to_work
+      - relocate_for_work
+      - visa_sponsorship
+      - acceptable_travel_time
+      - contract_compensation
+      - full_time_compensation
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      - address
+      - focus_area
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - resume_url
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - created_at
+      - updated_at
+      - id
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: me
+    permission:
+      columns:
+      - acceptable_travel_time
+      - address
+      - contract_compensation
+      - driving_to_work
+      - focus_area
+      - full_time_compensation
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - relocate_for_work
+      - resume_url
+      - visa_sponsorship
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+  - role: recruiter
+    permission:
+      columns:
+      - acceptable_travel_time
+      - address
+      - contract_compensation
+      - driving_to_work
+      - focus_area
+      - full_time_compensation
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - relocate_for_work
+      - resume_url
+      - visa_sponsorship
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+      - acceptable_travel_time
+      - address
+      - contract_compensation
+      - driving_to_work
+      - focus_area
+      - full_time_compensation
+      - other_focus_area
+      - phone_number
+      - profile_type
+      - relocate_for_work
+      - resume_url
+      - visa_sponsorship
+      - work_location_type
+      - work_status
+      - work_vacation_duration
+      - years_of_experience
+      - address_latitude
+      - address_longitude
+      filter:
+        user:
+          id:
+            _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+  event_triggers:
+  - name: recruiter-profile
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      num_retries: 0
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: '{{NHOST_CUSTOM_API_URL}}/profiles/client'
+- table:
+    schema: public
+    name: profiles_spoken_languages
+  object_relationships:
+  - name: profile
+    using:
+      foreign_key_constraint_on: profile_id
+  - name: spokenLanguage
+    using:
+      foreign_key_constraint_on: language
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - profile_id
+      - language
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - language
+      - profile_id
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - language
+      - profile_id
+      filter: {}
+- table:
+    schema: public
+    name: profiles_types
+  is_enum: true
+  array_relationships:
+  - name: focusArea
+    using:
+      foreign_key_constraint_on:
+        column: profile_type
+        table:
+          schema: public
+          name: focus_areas
+  - name: profiles
+    using:
+      foreign_key_constraint_on:
+        column: profile_type
+        table:
+          schema: public
+          name: profiles
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: programming_languages
+  is_enum: true
+  array_relationships:
+  - name: associatedFrameworks
+    using:
+      foreign_key_constraint_on:
+        column: language
+        table:
+          schema: public
+          name: frameworks_associated_languages
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      - release_year
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - release_year
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - release_year
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: spoken_languages
+  is_enum: true
+  array_relationships:
+  - name: associatedProfiles
+    using:
+      foreign_key_constraint_on:
+        column: language
+        table:
+          schema: public
+          name: profiles_spoken_languages
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: users
+  object_relationships:
+  - name: account
+    using:
+      manual_configuration:
+        remote_table:
+          schema: auth
+          name: accounts
+        column_mapping:
+          id: user_id
+  - name: profile
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: profiles
+        column_mapping:
+          id: user_id
+  array_relationships:
+  - name: profiles
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          schema: public
+          name: profiles
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - avatar_url
+      - display_name
+      - created_at
+      - updated_at
+      - id
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+  - role: recruiter
+    permission:
+      columns:
+      - avatar_url
+      - display_name
+      - created_at
+      - updated_at
+      - id
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+  - role: user
+    permission:
+      columns:
+      - avatar_url
+      - display_name
+      - created_at
+      - updated_at
+      - id
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: me
+    permission:
+      columns:
+      - avatar_url
+      - created_at
+      - display_name
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check:
+        id:
+          _eq: X-Hasura-User-Id
+  - role: recruiter
+    permission:
+      columns:
+      - avatar_url
+      - created_at
+      - display_name
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check:
+        id:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: work_location_types
+  is_enum: true
+  array_relationships:
+  - name: profiles
+    using:
+      foreign_key_constraint_on:
+        column: work_location_type
+        table:
+          schema: public
+          name: profiles
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: work_status_types
+  is_enum: true
+  array_relationships:
+  - name: profiles
+    using:
+      foreign_key_constraint_on:
+        column: work_status
+        table:
+          schema: public
+          name: profiles
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+- table:
+    schema: public
+    name: work_vacation_durations
+  is_enum: true
+  array_relationships:
+  - name: profiles
+    using:
+      foreign_key_constraint_on:
+        column: work_vacation_duration
+        table:
+          schema: public
+          name: profiles
+  select_permissions:
+  - role: me
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+  - role: recruiter
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - order
+      - value
+      filter: {}

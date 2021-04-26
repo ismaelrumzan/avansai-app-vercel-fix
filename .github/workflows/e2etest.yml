@@ -1,0 +1,34 @@
+#name: Cypress Test
+#on:
+#  pull_request:
+#    branches: [main]
+#
+#  workflow_dispatch:
+#
+#jobs:
+#  cypress-test:
+#    runs-on: ubuntu-latest
+#    env:
+#      NEXT_PUBLIC_GRAPHQL_ENDPOINT: ${{ secrets.NEXT_PUBLIC_GRAPHQL_ENDPOINT }}
+#      NEXT_PUBLIC_BACKEND_ENDPOINT: ${{ secrets.NEXT_PUBLIC_BACKEND_ENDPOINT }}
+#      NEXT_PUBLIC_HASURA_SECRET: ${{ secrets.NEXT_PUBLIC_HASURA_SECRET }}
+#      HASURA_GRAPHQL_ENDPOINT: ${{ secrets.HASURA_GRAPHQL_ENDPOINT }}
+#    container: cypress/browsers:node12.18.3-chrome87-ff82
+#    steps:
+#      - uses: actions/checkout@master
+#      - uses: actions/setup-node@master
+#        with:
+#          node-version: 14
+#
+#      - run: npm install -g yarn
+#      - run: npm install -g nhost
+#      - run: npm install -g hasura-cli
+#      - run: curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#      - run: chmod +x /usr/local/bin/docker-compose
+#      - run: nhost dev
+#      - run: hasura seeds apply --file /03-29-2021-insert-test-user.sql --admin-secret ${{ secrets.NEXT_PUBLIC_HASURA_SECRET }} --endpoint ${{ secrets.HASURA_GRAPHQL_ENDPOINT }}
+#      - run: yarn install --frozen-lockfile
+#      - name: Run cypress tests
+#        run: npm run e2e:ci
+#
+#        continue-on-error: false
