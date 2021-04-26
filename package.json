@@ -28,7 +28,7 @@
     "@nhost/react-apollo": "^1.0.7",
     "@nhost/react-auth": "^1.0.5",
     "@streamlinehq/streamlinehq": "^2.1.0",
-    "@testing-library/dom": "7.30.3",
+    "@testing-library/dom": "7.30.4",
     "@testing-library/jest-dom": "5.11.10",
     "@testing-library/react": "11.2.6",
     "@testing-library/user-event": "13.1.3",
